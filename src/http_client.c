@@ -1,5 +1,6 @@
 #include <http_client.h>
 #include <mosquitto.h>
+#include <config.h>
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <netinet/in.h>
@@ -11,8 +12,6 @@
 
 #define BUF_SIZE 512
 
-char* host = "localhost";
-
 void create_request(char* endpoint, char* content, char* request) {
     char methodLine[128];
     char hostLine[128];
@@ -20,7 +19,7 @@ void create_request(char* endpoint, char* content, char* request) {
     char contentLengthLine[128];
 
     sprintf(methodLine, "POST %s HTTP/1.1", endpoint);
-    sprintf(hostLine, "Host: %s", host);
+    sprintf(hostLine, "Host: %s", config_server_host);
     sprintf(contentTypeLine, "Content-Type: application/json");
     sprintf(contentLengthLine, "Content-Length: %d", strlen(content));
 
@@ -50,11 +49,11 @@ int open_socket() {
 		return ERR_NO_SOCK;
 	}
 
-    if((hp = gethostbyname(host)) == NULL){
+    if((hp = gethostbyname(config_server_host)) == NULL){
 		return ERR_HOSTNAME;
 	}
 	bcopy(hp->h_addr, &addr.sin_addr, hp->h_length);
-	addr.sin_port = htons(80);
+	addr.sin_port = htons(config_server_port);
 	addr.sin_family = AF_INET;
 
     if(connect(sock, (struct sockaddr *)&addr, sizeof(struct sockaddr_in)) == -1){
@@ -75,7 +74,7 @@ int status_from_response(char* response) {
 int post(char* endpoint, char* content) {
     char request[BUF_SIZE];
     create_request(endpoint, content, request);
-    int sock = open_socket(host);
+    int sock = open_socket(config_server_host);
 
     if(sock < 0) {
         return sock;

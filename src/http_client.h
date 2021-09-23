@@ -6,7 +6,5 @@
 
 int post(char* endpoint, char* content);
 
-extern char* host;
-
 #define HTTP_CLIENT_H
 #endif

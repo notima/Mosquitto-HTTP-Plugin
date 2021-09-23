@@ -1,10 +1,9 @@
 #include <callbacks.h>
+#include <config.h>
 #include <http_client.h>
 #include <mosquitto.h>
 #include <mosquitto_broker.h>
 #include <stdio.h>
-
-#define AUTH_SERVER_ENDPOINT "/post"
 
 void log_error(int status) {
 }
@@ -12,7 +11,7 @@ void log_error(int status) {
 int cb_basic_auth(int eventType, struct mosquitto_evt_basic_auth *event, void *userdata) {
     char authJson[128];
     sprintf(authJson, "{\"username\":\"%s\",\"password\":\"%s\"}", event->username, event->password);
-    int status = post(AUTH_SERVER_ENDPOINT, authJson);
+    int status = post(config_connect_uri, authJson);
     if(status < 0) {
         return MOSQ_ERR_NO_CONN;
     }

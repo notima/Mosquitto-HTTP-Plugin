@@ -2,11 +2,10 @@
 #include <mosquitto_plugin.h>
 #include <mosquitto.h>
 #include <callbacks.h>
+#include <config.h>
 #include <stdio.h>
 
 #define SUCCESS 0
-
-#define CONFIG_HOST "host"
 
 void createFile(char* name){
     FILE *fp;
@@ -17,6 +16,9 @@ void createFile(char* name){
 void setup_config(struct mosquitto_opt *options, int option_count) {
     for(int i = 0; i < option_count; i++) {
         mosquitto_log_printf(MOSQ_LOG_INFO, "found config: %s : %s", options[i].key, options[i].value);
+        if(set_config(options[i].key, options[i].value) == CONFIG_UNKNOWN) {
+            mosquitto_log_printf(MOSQ_LOG_INFO, "Unknown configuration: %s", options[i].key, options[i].value);
+        }
     }
 }
 
