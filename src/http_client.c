@@ -41,24 +41,25 @@ int open_socket() {
     int timeout = 10;
     int sock = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
     struct hostent *hp;
-	struct sockaddr_in addr;
+    struct sockaddr_in addr;
     setsockopt(sock, IPPROTO_TCP, TCP_NODELAY, (const char *)&on, sizeof(int));
     setsockopt(sock, IPPROTO_TCP, TCP_USER_TIMEOUT, (const char *)&timeout, sizeof(int));
 
     if(sock == -1){
-		return ERR_NO_SOCK;
-	}
+        return ERR_NO_SOCK;
+    }
 
     if((hp = gethostbyname(config_server_host)) == NULL){
-		return ERR_HOSTNAME;
-	}
-	bcopy(hp->h_addr, &addr.sin_addr, hp->h_length);
-	addr.sin_port = htons(config_server_port);
-	addr.sin_family = AF_INET;
+        return ERR_HOSTNAME;
+    }
+
+    bcopy(hp->h_addr, &addr.sin_addr, hp->h_length);
+    addr.sin_port = htons(config_server_port);
+    addr.sin_family = AF_INET;
 
     if(connect(sock, (struct sockaddr *)&addr, sizeof(struct sockaddr_in)) == -1){
-		return ERR_CONNECTION;
-	}
+        return ERR_CONNECTION;
+    }
 
     return sock;
 }
@@ -77,7 +78,7 @@ int post(char* endpoint, char* content) {
     int sock = open_socket(config_server_host);
 
     if(sock < 0) {
-        return sock;
+    return sock;
     }
 
     write(sock, request, strlen(request));
