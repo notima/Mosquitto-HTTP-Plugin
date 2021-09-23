@@ -5,9 +5,6 @@
 #include <mosquitto_broker.h>
 #include <stdio.h>
 
-void log_error(int status) {
-}
-
 int cb_basic_auth(int eventType, struct mosquitto_evt_basic_auth *event, void *userdata) {
     char authJson[128];
     sprintf(authJson, "{\"username\":\"%s\",\"password\":\"%s\"}", event->username, event->password);
