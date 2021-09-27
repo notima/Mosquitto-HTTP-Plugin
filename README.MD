@@ -4,7 +4,14 @@ This is a plugin for mosquitto v2.0 onwards. It allows remote authentication of 
 
 ## Building the plugin
 
-The plugin does not require access to the mosquitto source code in order to be compiled. simply run the Makefile
+The plugin requires a copy of the Mosquitto source code in order to be compiled.
+
+    # Download and extract the Mosquitto source code
+    wget https://mosquitto.org/files/source/mosquitto-2.0.12.tar.gz -O - | tar -xz
+
+When the source code is downlaoded, the compiler needs to know where it is. The path to the source code will be retrieved from a variable called `MOSQUITTO_DIR` which should be defined in a file called `config.mk`. You can use [config.mk.example](config.mk.example) as a template. 
+
+Edit the file to point to the root directory of the mosquitto source code and then run the make file.
 
     make
 
@@ -43,4 +50,4 @@ The plugin will send POST requests to the configured endpoints when a client aut
 
     {"clientId":"client-123","username":"User123","topic":"mqtt/topic"}
 
-Both of these endpoints simply need to respond with a `2XX` status in order to allow the authentication/check. any other status will result in connections or publications being blocket.
+Both of these endpoints simply need to respond with a `2XX` status in order to allow the authentication/check. any other status will result in requests to connect, read or write being blocket.
