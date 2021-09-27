@@ -11,7 +11,7 @@ The plugin requires a copy of the Mosquitto source code in order to be compiled.
 
 When the source code is downlaoded, the compiler needs to know where it is. The path to the source code will be retrieved from a variable called `MOSQUITTO_DIR` which should be defined in a file called `config.mk`. You can use [config.mk.example](config.mk.example) as a template. 
 
-Edit the file to point to the root directory of the mosquitto source code and then run the make file.
+Edit the file to point to the root directory of the Mosquitto source code and then run the make file.
 
     make
 
@@ -28,7 +28,7 @@ To use the plugin, add the following to your mosquitto configuration file:
     auth_opt_http_connect_uri /rest/endpoint/connect
     auth_opt_http_acl_uri /rest/endpoint/access-control
 
-## Developing a REST endpoint compatible with the plugin
+## Developing a REST API compatible with the plugin
 
 The plugin will send POST requests to the configured endpoints when a client authenticates and when ACL checks are made. The requests will look something like the following examples:
 

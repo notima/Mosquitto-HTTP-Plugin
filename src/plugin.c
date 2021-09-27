@@ -7,12 +7,6 @@
 
 #define SUCCESS 0
 
-void createFile(char* name){
-    FILE *fp;
-    fp  = fopen (name, "w");
-    fclose (fp);
-}
-
 void setup_config(struct mosquitto_opt *options, int option_count) {
     for(int i = 0; i < option_count; i++) {
         mosquitto_log_printf(MOSQ_LOG_INFO, "found config: %s : %s", options[i].key, options[i].value);
@@ -30,12 +24,10 @@ mosq_plugin_EXPORT int mosquitto_plugin_init(mosquitto_plugin_id_t *identifier, 
     setup_config(options, option_count);
     int result = 0;
     result += mosquitto_callback_register(identifier, MOSQ_EVT_BASIC_AUTH, cb_basic_auth, NULL, userdata);
+    result += mosquitto_callback_register(identifier, MOSQ_EVT_ACL_CHECK, cb_acl_check, NULL, userdata);
     return result;
 }
 
 mosq_plugin_EXPORT int mosquitto_plugin_cleanup(void *userdata, struct mosquitto_opt *options, int option_count) {
-    remove("/mosquitto/plugin/basic_auth.txt");
-    remove("/mosquitto/plugin/request.txt");
-    remove("/mosquitto/plugin/response.txt");
     return SUCCESS;
 }
