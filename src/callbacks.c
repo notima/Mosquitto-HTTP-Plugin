@@ -7,7 +7,7 @@
 #include <stdio.h>
 
 int cb_basic_auth(int eventType, struct mosquitto_evt_basic_auth *event, void *userdata) {
-    char authJson[128];
+    char authJson[4096];
     sprintf(authJson, "{\"username\":\"%s\",\"password\":\"%s\"}", event->username, event->password);
     int status = post(config_connect_uri, authJson);
     if(status < 0) {
@@ -24,8 +24,15 @@ int cb_basic_auth(int eventType, struct mosquitto_evt_basic_auth *event, void *u
 }
 
 int cb_acl_check(int eventType, struct mosquitto_evt_acl_check *event, void *userdata) {
-    char aclJson[128];
-    sprintf(aclJson, "{\"clientId\":\"$s\",\"username\":\"%s\",\"topic\":\"$s\"}", event->client->id, event->client->username, event->topic);
+    const char* username = mosquitto_client_username(event->client);
+    char aclJson[4096];
+    sprintf(
+        aclJson, 
+        "{\"username\":\"%s\",\"topic\":\"%s\",\"access\":\"%s\"}", 
+        username, 
+        event->topic,
+        event->access
+    );
     int status = post(config_acl_uri, aclJson);
     if(status < 0) {
         return MOSQ_ERR_NO_CONN;

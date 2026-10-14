@@ -1,3 +1,6 @@
+#ifndef MOSQ_HTTP_CALLBACKS_H
+#define MOSQ_HTTP_CALLBACKS_H
+
 #include <mosquitto_broker.h>
 
 /**
@@ -13,3 +16,5 @@ int cb_basic_auth(int eventType, struct mosquitto_evt_basic_auth *event, void *u
  * read/write operations will be blocked.
  */
 int cb_acl_check(int eventType, struct mosquitto_evt_acl_check *event, void *userdata);
+
+#endif
