@@ -1,5 +1,7 @@
 #include "config.h"
-#include "string.h"
+#include <string.h>
+#include <stdlib.h>
+
 
 #define CONFIG_HOST "http_host"
 #define CONFIG_PORT "http_port"

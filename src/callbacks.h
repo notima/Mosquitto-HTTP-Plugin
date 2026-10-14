@@ -7,7 +7,7 @@
  * Called by mosquitto when a client tries to connect to the broker.
  * The connection will be blocket unless this method returns MOSQ_ERR_SUCCESS.
  */
-int cb_basic_auth(int eventType, struct mosquitto_evt_basic_auth *event, void *userdata);
+int cb_basic_auth(int eventType, void *event_data, void *userdata);
 
 /**
  * Called by mosquitto when an access control is made. Access controls are made
@@ -15,6 +15,6 @@ int cb_basic_auth(int eventType, struct mosquitto_evt_basic_auth *event, void *u
  * Unless MOSQ_ERR_SUCCESS is returned, the access control will be denied and 
  * read/write operations will be blocked.
  */
-int cb_acl_check(int eventType, struct mosquitto_evt_acl_check *event, void *userdata);
+int cb_acl_check(int eventType, void *event_data, void *userdata);
 
 #endif

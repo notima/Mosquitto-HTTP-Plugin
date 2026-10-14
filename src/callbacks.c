@@ -6,7 +6,8 @@
 #include <mosquitto_internal.h>
 #include <stdio.h>
 
-int cb_basic_auth(int eventType, struct mosquitto_evt_basic_auth *event, void *userdata) {
+int cb_basic_auth(int eventType, void *event_data, void *userdata) {
+    struct mosquitto_evt_basic_auth *event = event_data;
     char authJson[4096];
     sprintf(authJson, "{\"username\":\"%s\",\"password\":\"%s\"}", event->username, event->password);
     int status = post(config_connect_uri, authJson);
@@ -23,7 +24,8 @@ int cb_basic_auth(int eventType, struct mosquitto_evt_basic_auth *event, void *u
     }
 }
 
-int cb_acl_check(int eventType, struct mosquitto_evt_acl_check *event, void *userdata) {
+int cb_acl_check(int eventType, void *event_data, void *userdata) {
+    struct mosquitto_evt_acl_check *event = event_data;
     const char* username = mosquitto_client_username(event->client);
     char aclJson[4096];
     sprintf(

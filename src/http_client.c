@@ -9,6 +9,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 
 #define BUF_SIZE 512
 
@@ -32,8 +33,6 @@ void create_request(char* endpoint, char* content, char* request) {
         contentLengthLine,
         content
     );
-
-    return request;
 }
 
 int open_socket() {
