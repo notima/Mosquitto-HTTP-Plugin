@@ -30,7 +30,7 @@ int cb_acl_check(int eventType, void *event_data, void *userdata) {
     char aclJson[4096];
     sprintf(
         aclJson, 
-        "{\"username\":\"%s\",\"topic\":\"%s\",\"access\":\"%s\"}", 
+        "{\"username\":\"%s\",\"topic\":\"%s\",\"access\":\"%d\"}", 
         username, 
         event->topic,
         event->access
