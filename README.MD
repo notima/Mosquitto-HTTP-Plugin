@@ -4,14 +4,12 @@ This is a plugin for mosquitto v2.0 onwards. It allows remote authentication of 
 
 ## Building the plugin
 
-The plugin requires a copy of the Mosquitto source code in order to be compiled.
+The plugin requires a copy of the Mosquitto source code in order to be compiled. This is vendored as the `mosquitto` git submodule, pinned to the version matching the `eclipse-mosquitto` Docker image this project uses.
 
-    # Download and extract the Mosquitto source code
-    wget https://mosquitto.org/files/source/mosquitto-2.0.12.tar.gz -O - | tar -xz
+    # Fetch the vendored Mosquitto source code
+    git submodule update --init mosquitto
 
-When the source code is downlaoded, the compiler needs to know where it is. The path to the source code will be retrieved from a variable called `MOSQUITTO_DIR` which should be defined in a file called `config.mk`. You can use [config.mk.example](config.mk.example) as a template. 
-
-Edit the file to point to the root directory of the Mosquitto source code and then run the make file.
+The compiler needs to know where the source code is. The path is retrieved from a variable called `MOSQUITTO_DIR` which should be defined in a file called `config.mk`. Copy [config.mk.example](config.mk.example) to `config.mk` (it already points `MOSQUITTO_DIR` at the vendored submodule) and run the make file.
 
     make
 

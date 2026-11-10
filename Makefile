@@ -2,8 +2,8 @@ include config.mk
 
 CFLAGS = -fPIC
 CFLAGS += -Isrc
-CFLAGS += -I$(MOSQUITTO_DIR)/lib/
-CFLAGS += -I$(MOSQUITTO_DIR)/include/
+CFLAGS += -Imosquitto/lib/
+CFLAGS += -Imosquitto/include/
 
 compile: precompile config.o http_client.o callbacks.o plugin.o
 	gcc -shared -o bin/plugin.so bin/obj/plugin.o bin/obj/config.o bin/obj/callbacks.o bin/obj/http_client.o
