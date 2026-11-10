@@ -1,5 +1,3 @@
-include config.mk
-
 CFLAGS = -fPIC
 CFLAGS += -Isrc
 CFLAGS += -Imosquitto/lib/
@@ -22,3 +20,6 @@ callbacks.o:
 
 plugin.o:
 	gcc $(CFLAGS) -c src/plugin.c -o bin/obj/plugin.o
+
+clean:
+	rm -rf bin
