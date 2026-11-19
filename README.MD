@@ -15,6 +15,12 @@ The compiler needs to know where the source code is. The path is retrieved from 
 
 The compiled plugin is now in `bin/plugin.so`.
 
+### Dependencies
+
+Before building the plugin, the follwoing libraries/packages will have to be installed:
+
+- libcjson-dev
+
 ## Using the plugin
 
 To use the plugin, add the following to your mosquitto configuration file:
