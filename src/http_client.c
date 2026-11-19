@@ -49,6 +49,7 @@ int open_socket() {
     }
 
     if((hp = gethostbyname(config_server_host)) == NULL){
+        close(sock);
         return ERR_HOSTNAME;
     }
 
@@ -57,6 +58,7 @@ int open_socket() {
     addr.sin_family = AF_INET;
 
     if(connect(sock, (struct sockaddr *)&addr, sizeof(struct sockaddr_in)) == -1){
+        close(sock);
         return ERR_CONNECTION;
     }
 
@@ -85,6 +87,7 @@ int post(char* endpoint, char* content) {
     char response[BUF_SIZE];
     bzero(response, BUF_SIZE);
     read(sock, response, BUF_SIZE);
+    close(sock);
 
     return status_from_response(response);
 }
