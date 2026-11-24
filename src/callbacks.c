@@ -4,7 +4,6 @@
 #include <json.h>
 #include <mosquitto.h>
 #include <mosquitto_broker.h>
-#include <mosquitto_internal.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -69,7 +68,7 @@ int cb_acl_check(int eventType, void *event_data, void *userdata) {
     if(status / 100 == 2) {
         return MOSQ_ERR_SUCCESS;
     } else {
-        mosquitto_log_printf(MOSQ_LOG_INFO, "Access denied for user: %s to topic %s", event->client->username, event->topic);
+        mosquitto_log_printf(MOSQ_LOG_INFO, "Access denied for user: %s to topic %s", mosquitto_client_username(event->client), event->topic);
         return MOSQ_ERR_ACL_DENIED;
     }
 }
