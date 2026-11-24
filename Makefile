@@ -3,8 +3,8 @@ CFLAGS += -Isrc
 CFLAGS += -Imosquitto/lib/
 CFLAGS += -Imosquitto/include/
 
-compile: precompile config.o http_client.o callbacks.o plugin.o
-	gcc -shared -o bin/plugin.so bin/obj/plugin.o bin/obj/config.o bin/obj/callbacks.o bin/obj/http_client.o
+compile: precompile config.o http_client.o callbacks.o json.o plugin.o
+	gcc -shared -o bin/plugin.so bin/obj/plugin.o bin/obj/config.o bin/obj/callbacks.o bin/obj/http_client.o bin/obj/json.o
 	
 precompile:
 	mkdir -p bin/obj
@@ -17,6 +17,9 @@ http_client.o:
 
 callbacks.o:
 	gcc $(CFLAGS) -c src/callbacks.c -o bin/obj/callbacks.o
+
+json.o:
+	gcc $(CFLAGS) -c src/json.c -o bin/obj/json.o
 
 plugin.o:
 	gcc $(CFLAGS) -c src/plugin.c -o bin/obj/plugin.o

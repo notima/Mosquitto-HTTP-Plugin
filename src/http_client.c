@@ -1,6 +1,7 @@
 #include <http_client.h>
 #include <mosquitto.h>
 #include <config.h>
+#include <json.h>
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <netinet/in.h>
@@ -13,24 +14,18 @@
 
 #define BUF_SIZE 512
 
-void create_request(char* endpoint, char* content, char* request) {
-    char methodLine[128];
-    char hostLine[128];
-    char contentTypeLine[128];
-    char contentLengthLine[128];
-
-    sprintf(methodLine, "POST %s HTTP/1.1", endpoint);
-    sprintf(hostLine, "Host: %s", config_server_host);
-    sprintf(contentTypeLine, "Content-Type: application/json");
-    sprintf(contentLengthLine, "Content-Length: %d", strlen(content));
-
-    sprintf(
-        request,
-        "%s\r\n%s\r\n%s\r\n%s\r\n\r\n%s",
-        methodLine,
-        hostLine,
-        contentTypeLine,
-        contentLengthLine,
+// Returns the full request, allocated to fit; the caller frees it. NULL on failure.
+char *create_request(const char* endpoint, const char* content) {
+    return format_alloc(
+        "POST %s HTTP/1.1\r\n"
+        "Host: %s\r\n"
+        "Content-Type: application/json\r\n"
+        "Content-Length: %zu\r\n"
+        "\r\n"
+        "%s",
+        endpoint,
+        config_server_host,
+        strlen(content),
         content
     );
 }
@@ -73,16 +68,31 @@ int status_from_response(char* response) {
     return atoi(status);
 }
 
-int post(char* endpoint, char* content) {
-    char request[BUF_SIZE];
-    create_request(endpoint, content, request);
+int post(const char* endpoint, const char* content) {
+    char *request = create_request(endpoint, content);
+    if(request == NULL) {
+        return ERR_NO_MEMORY;
+    }
     int sock = open_socket(config_server_host);
 
     if(sock < 0) {
-    return sock;
+        free(request);
+        return sock;
     }
 
-    write(sock, request, strlen(request));
+    // write() may send less than asked for, which a long (escaped) body makes more likely.
+    size_t length = strlen(request);
+    size_t sent = 0;
+    while(sent < length) {
+        ssize_t written = write(sock, request + sent, length - sent);
+        if(written <= 0) {
+            free(request);
+            close(sock);
+            return ERR_CONNECTION;
+        }
+        sent += (size_t)written;
+    }
+    free(request);
 
     char response[BUF_SIZE];
     bzero(response, BUF_SIZE);
