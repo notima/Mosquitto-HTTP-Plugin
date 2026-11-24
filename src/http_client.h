@@ -4,6 +4,7 @@
 #define ERR_CONNECTION -2
 #define ERR_HOSTNAME -3
 #define ERR_NO_MEMORY -4
+#define ERR_BAD_RESPONSE -5
 
 /**
  * Send a POST request to the endpoint with content as body

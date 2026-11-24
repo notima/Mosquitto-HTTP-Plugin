@@ -60,12 +60,18 @@ int open_socket() {
     return sock;
 }
 
-int status_from_response(char* response) {
-    char response_arr[BUF_SIZE];
-    strcpy(response_arr, response);
-    char *protocol = strtok(response_arr, " ");
-    char *status = strtok(NULL, " ");
-    return atoi(status);
+// The status code from a response's status line ("HTTP/1.1 200 OK"), or
+// ERR_BAD_RESPONSE if the response doesn't start with one.
+int status_from_response(const char* response) {
+    if(strncmp(response, "HTTP/", 5) != 0) {
+        return ERR_BAD_RESPONSE;
+    }
+    const char *space = strchr(response, ' ');
+    int status;
+    if(space == NULL || sscanf(space + 1, "%3d", &status) != 1) {
+        return ERR_BAD_RESPONSE;
+    }
+    return status;
 }
 
 int post(const char* endpoint, const char* content) {
@@ -94,10 +100,24 @@ int post(const char* endpoint, const char* content) {
     }
     free(request);
 
+    // Only the status line is needed. Reads until it has arrived, the connection is
+    // closed, or the buffer is full - always leaving room for the terminating null.
     char response[BUF_SIZE];
-    bzero(response, BUF_SIZE);
-    read(sock, response, BUF_SIZE);
+    size_t received = 0;
+    while(received < BUF_SIZE - 1) {
+        ssize_t count = read(sock, response + received, BUF_SIZE - 1 - received);
+        if(count <= 0) {
+            break;
+        }
+        received += (size_t)count;
+        response[received] = '\0';
+        if(strchr(response, '\n') != NULL) {
+            break;
+        }
+    }
     close(sock);
+    response[received] = '\0';
 
+    // An empty or garbled response is an error, which the callers treat as denied.
     return status_from_response(response);
 }
