@@ -41,9 +41,11 @@ The plugin will send POST requests to the configured endpoints when a client aut
     POST /rest/endpoint/connect HTTP/1.1
     Host: example.com
     Content-Type: application/json
-    Content-Length: 43
+    Content-Length: 66
 
-    {"username":"User123","password":"pass123"}
+    {"username":"User123","password":"pass123","address":"192.0.2.10"}
+
+`address` is the client's IP address, so the API can count failed logins per address. If the API answers `429`, the connection is refused, and the broker logs that the user had too many failed logins.
 
 ### ACL check
 
