@@ -15,6 +15,10 @@ The compiler needs to know where the source code is. The path is retrieved from 
 
 The compiled plugin is now in `bin/plugin.so`.
 
+### With Nix
+
+[package.nix](package.nix) builds the plugin as a Nix package, with `nix build`. It puts the plugin in `result/lib/plugin.so`. It is built against the headers of nixpkgs' `mosquitto` package instead of the vendored source code, so that it matches the broker from nixpkgs that loads it, and doesn't need the `mosquitto` submodule.
+
 ### Dependencies
 
 Before building the plugin, the follwoing libraries/packages will have to be installed:
