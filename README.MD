@@ -27,10 +27,16 @@ To use the plugin, add the following to your mosquitto configuration file:
 
     allow_anonymous false
     plugin /path/to/plugin.so
-    auth_opt_http_host example.com
-    auth_opt_http_port 8080
-    auth_opt_http_connect_uri /rest/endpoint/connect
-    auth_opt_http_acl_uri /rest/endpoint/access-control
+    plugin_opt_http_host example.com
+    plugin_opt_http_port 8080
+    plugin_opt_http_connect_uri /rest/endpoint/connect
+    plugin_opt_http_acl_uri /rest/endpoint/access-control
+
+These options are optional:
+
+- `plugin_opt_acl_cache_seconds` (default `60`): how long an answer from the ACL endpoint is remembered, for one username, topic and kind of access. The broker checks access for every message it receives and every message it delivers, and while it waits for the endpoint, it serves no other client. A change of access takes up to this long to apply to clients already connected. `0` turns the cache off.
+- `plugin_opt_acl_cache_size` (default `10000`): how many answers are remembered at most. When full, the oldest is forgotten first. Answers for a username and topic longer than 512 bytes together aren't cached, so an answer takes at most about 650 bytes, and a full cache of 10000 at most about 6.5 MB (typically about 160 bytes an answer).
+- `plugin_opt_acl_max_denials_per_minute` (default `1000`): how many denied checks that had to be asked of the endpoint (not answered from the cache) one username may cause in a minute. Above it, that username's uncached checks are denied without asking for the rest of the minute, and its clients that cause them are disconnected. This stops a client from keeping the broker busy by using a new topic it may not use each time. `0` turns the limit off.
 
 ## Developing a REST API compatible with the plugin
 

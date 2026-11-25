@@ -3,6 +3,8 @@
 #include <mosquitto.h>
 #include <callbacks.h>
 #include <config.h>
+#include <acl_cache.h>
+#include <denial_limit.h>
 #include <stdio.h>
 
 #define SUCCESS 0
@@ -10,8 +12,16 @@
 void setup_config(struct mosquitto_opt *options, int option_count) {
     for(int i = 0; i < option_count; i++) {
         mosquitto_log_printf(MOSQ_LOG_INFO, "found config: %s : %s", options[i].key, options[i].value);
-        if(set_config(options[i].key, options[i].value) == CONFIG_UNKNOWN) {
-            mosquitto_log_printf(MOSQ_LOG_INFO, "Unknown configuration: %s", options[i].key, options[i].value);
+        int result = set_config(options[i].key, options[i].value);
+        if(result == CONFIG_UNKNOWN) {
+            mosquitto_log_printf(MOSQ_LOG_INFO, "Unknown configuration: %s", options[i].key);
+        } else if(result == CONFIG_INVALID) {
+            mosquitto_log_printf(
+                MOSQ_LOG_WARNING,
+                "Invalid value for %s: %s (expected a whole number of 0 or more), using the default",
+                options[i].key,
+                options[i].value
+            );
         }
     }
 }
@@ -25,9 +35,12 @@ mosq_plugin_EXPORT int mosquitto_plugin_init(mosquitto_plugin_id_t *identifier, 
     int result = 0;
     result += mosquitto_callback_register(identifier, MOSQ_EVT_BASIC_AUTH, cb_basic_auth, NULL, userdata);
     result += mosquitto_callback_register(identifier, MOSQ_EVT_ACL_CHECK, cb_acl_check, NULL, userdata);
+    result += mosquitto_callback_register(identifier, MOSQ_EVT_TICK, cb_tick, NULL, userdata);
     return result;
 }
 
 mosq_plugin_EXPORT int mosquitto_plugin_cleanup(void *userdata, struct mosquitto_opt *options, int option_count) {
+    acl_cache_clear();
+    denial_limit_clear();
     return SUCCESS;
 }

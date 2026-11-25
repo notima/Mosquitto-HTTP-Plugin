@@ -17,4 +17,10 @@ int cb_basic_auth(int eventType, void *event_data, void *userdata);
  */
 int cb_acl_check(int eventType, void *event_data, void *userdata);
 
+/**
+ * Called by mosquitto regularly. Disconnects the clients that caused too many denied
+ * access checks, and once a minute forgets cached answers and counts that are out of date.
+ */
+int cb_tick(int eventType, void *event_data, void *userdata);
+
 #endif
