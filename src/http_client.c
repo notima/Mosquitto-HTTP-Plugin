@@ -30,7 +30,7 @@ char *create_request(const char* endpoint, const char* content) {
     );
 }
 
-int open_socket() {
+int open_socket(void) {
     int on = 1;
     int timeout = 10;
     int sock = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
@@ -79,7 +79,7 @@ int post(const char* endpoint, const char* content) {
     if(request == NULL) {
         return ERR_NO_MEMORY;
     }
-    int sock = open_socket(config_server_host);
+    int sock = open_socket();
 
     if(sock < 0) {
         free(request);
